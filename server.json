@@ -1,0 +1,43 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Louis-Lastella/synology-chat-mcp",
+  "title": "Synology Chat",
+  "description": "Read channels and posts, find users, send messages and files on any Synology Chat server.",
+  "repository": {
+    "url": "https://github.com/Louis-Lastella/synology-chat-mcp",
+    "source": "github"
+  },
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "ghcr.io/louis-lastella/synology-chat-mcp:0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SYNOLOGY_CHAT_URL",
+          "description": "Base URL of your Synology Chat server, e.g. https://nas.example.com:5001",
+          "isRequired": true
+        },
+        {
+          "name": "SYNOLOGY_CHAT_USER",
+          "description": "Username of the Synology account (no 2FA)",
+          "isRequired": true
+        },
+        {
+          "name": "SYNOLOGY_CHAT_PASS",
+          "description": "Password of the Synology account",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "SYNOLOGY_CHAT_VERIFY_SSL",
+          "description": "Set to false for self-signed certificates",
+          "default": "true"
+        }
+      ]
+    }
+  ]
+}

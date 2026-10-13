@@ -75,6 +75,28 @@ mcp_servers:
 
 From a local clone instead: `git clone`, `uv sync`, then use `uv` with args `--directory /path/to/synology-chat-mcp run synology-chat-mcp`.
 
+**Docker** (no uv needed), image `ghcr.io/louis-lastella/synology-chat-mcp`:
+
+```json
+{
+  "mcpServers": {
+    "synology-chat": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm",
+               "-e", "SYNOLOGY_CHAT_URL", "-e", "SYNOLOGY_CHAT_USER", "-e", "SYNOLOGY_CHAT_PASS",
+               "ghcr.io/louis-lastella/synology-chat-mcp"],
+      "env": {
+        "SYNOLOGY_CHAT_URL": "https://chat.example.com",
+        "SYNOLOGY_CHAT_USER": "your-username",
+        "SYNOLOGY_CHAT_PASS": "your-password"
+      }
+    }
+  }
+}
+```
+
+Also listed in the [official MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.Louis-Lastella/synology-chat-mcp`.
+
 ## Notes
 
 - Accounts with 2-factor authentication are not supported (the Web API wants a fresh OTP per login). Use an account without 2FA.

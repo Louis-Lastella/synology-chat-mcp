@@ -1,0 +1,42 @@
+name: Publish
+
+# On a version tag (v0.3.0): build the Docker image, push it to ghcr.io,
+# then register that version in the official MCP Registry.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/louis-lastella/synology-chat-mcp
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set version from tag
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          echo "V=$V" >> "$GITHUB_ENV"
+          jq --arg v "$V" --arg img "$IMAGE" \
+            '.version = $v | .packages[0].identifier = "\($img):\($v)"' server.json > server.tmp
+          mv server.tmp server.json
+
+      - name: Build and push image
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "$GH_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker build -t "$IMAGE:$V" -t "$IMAGE:latest" .
+          docker push --all-tags "$IMAGE"
+
+      - name: Publish to MCP Registry
+        run: |
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
